@@ -1,0 +1,12 @@
+{
+  "name": "kirby-image-api",
+  "description": "Non blocking image api",
+  "author": "Jon Gacnik <https://github.com/jongacnik>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jongacnik/kirby-index-field"
+  },
+  "version": "1.0.0",
+  "type": "kirby-plugin",
+  "license": "MIT"
+}
