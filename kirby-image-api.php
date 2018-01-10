@@ -38,23 +38,26 @@ class KirbyImgApi {
 
     page::$methods['imgapi'] = function($page, $filename, $attrs = false) use ($prefix) {
       if ($image = $page->image($filename)) {
-        if (!$attrs) return $image->url();
-        return url() . '/' . $prefix . $image->uri() . '?' . http_build_query($attrs);
+        $url = url() . '/' . $prefix . $image->uri();
+        if (!$attrs) return $url;
+        return $url . '?' . http_build_query($attrs);
       }
     };
 
     field::$methods['imgapi'] = function ($field, $attrs = false) use ($prefix) {
       if ($image = $field->toFile()) {
-        if (!$attrs) return $image->url();
-        return url() . '/' . $prefix . $image->uri() . '?' . http_build_query($attrs);
+        $url = url() . '/' . $prefix . $image->uri();
+        if (!$attrs) return $url;
+        return $url . '?' . http_build_query($attrs);
       }
     };
 
     field::$methods['imgapidata'] = function ($field, $attrs = false) use ($prefix) {
       if ($image = $field->toFile()) {
         $query = $attrs ? '?' . http_build_query($attrs) : '';
+        $url = url() . '/' . $prefix . $image->uri();
         return [
-          'src' => url() . '/' . $prefix . $image->uri() . $query,
+          'src' => $url . $query,
           'width' => $image->width(),
           'height' => $image->height()
         ];
