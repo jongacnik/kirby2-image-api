@@ -9,23 +9,44 @@
  * Set image path in config.php:
  * c::set('imgapi.endpoint', 'img/');
  *
- * Get Image API endpoint page method
+ * Using page:
  * $page->imgapi('image.jpg', [ 'width' => 100 ]);
+ * $page->imgapidata('image.jpg', [ 'width' => 100 ]);
  *
- * Get Image API endpoint field method
+ * Using field:
  * $page->imageField->imgapi([ 'width' => 100 ]);
- *
- * Get Image API endpoint / Image data field method
  * $page->imageField->imgapidata([ 'width' => 100 ]);
+ *
+ * Using file:
+ * $page->image()->imgapi([ 'width' => 100 ]);
+ * $page->image()->imgapidata([ 'width' => 100 ]);
  *
  */
 
 namespace KirbyImgApi;
 use page;
 use field;
+use file;
 use c;
 
 class KirbyImgApi {
+  
+  private static function src($image, $attrs, $prefix) {
+    $url = url() . '/' . $prefix . $image->uri();
+    if (!$attrs) return $url;
+    return $url . '?' . http_build_query($attrs);
+  }
+
+  private static function data($image, $attrs, $prefix) {
+    $query = $attrs ? '?' . http_build_query($attrs) : '';
+    $url = url() . '/' . $prefix . $image->uri();
+    return [
+      'src' => $url . $query,
+      'width' => $image->width(),
+      'height' => $image->height()
+    ];
+  }
+
   public static function register() {
     $prefix = c::get('imgapi.endpoint', 'imgapi/');
     
@@ -38,29 +59,37 @@ class KirbyImgApi {
 
     page::$methods['imgapi'] = function($page, $filename, $attrs = false) use ($prefix) {
       if ($image = $page->image($filename)) {
-        $url = url() . '/' . $prefix . $image->uri();
-        if (!$attrs) return $url;
-        return $url . '?' . http_build_query($attrs);
+        return KirbyImgApi::src($image, $attrs, $prefix);
+      }
+    };
+
+    page::$methods['imgapidata'] = function($page, $filename, $attrs = false) use ($prefix) {
+      if ($image = $page->image($filename)) {
+        return KirbyImgApi::data($image, $attrs, $prefix);
       }
     };
 
     field::$methods['imgapi'] = function ($field, $attrs = false) use ($prefix) {
       if ($image = $field->toFile()) {
-        $url = url() . '/' . $prefix . $image->uri();
-        if (!$attrs) return $url;
-        return $url . '?' . http_build_query($attrs);
+        return KirbyImgApi::src($image, $attrs, $prefix);
       }
     };
 
     field::$methods['imgapidata'] = function ($field, $attrs = false) use ($prefix) {
       if ($image = $field->toFile()) {
-        $query = $attrs ? '?' . http_build_query($attrs) : '';
-        $url = url() . '/' . $prefix . $image->uri();
-        return [
-          'src' => $url . $query,
-          'width' => $image->width(),
-          'height' => $image->height()
-        ];
+        return KirbyImgApi::data($image, $attrs, $prefix);
+      }
+    };
+
+    file::$methods['imgapi'] = function ($image, $attrs = false) use ($prefix) {
+      if ($image) {
+        return KirbyImgApi::src($image, $attrs, $prefix);
+      }
+    };
+
+    file::$methods['imgapidata'] = function ($image, $attrs = false) use ($prefix) {
+      if ($image) {
+        return KirbyImgApi::data($image, $attrs, $prefix);
       }
     };
   }
