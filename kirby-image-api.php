@@ -14,8 +14,8 @@
  * $page->imgapidata('image.jpg', [ 'width' => 100 ]);
  *
  * Using field:
- * $page->imageField->imgapi([ 'width' => 100 ]);
- * $page->imageField->imgapidata([ 'width' => 100 ]);
+ * $page->imageField()->imgapi([ 'width' => 100 ]);
+ * $page->imageField()->imgapidata([ 'width' => 100 ]);
  *
  * Using file:
  * $page->image()->imgapi([ 'width' => 100 ]);
