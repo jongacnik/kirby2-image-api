@@ -21,6 +21,9 @@
  * $page->image()->imgapi([ 'width' => 100 ]);
  * $page->image()->imgapidata([ 'width' => 100 ]);
  *
+ * Generate thumb by width shortcut:
+ * $page->image()->imgapi(100)
+ *
  */
 
 namespace KirbyImgApi;
@@ -32,12 +35,14 @@ use c;
 class KirbyImgApi {
   
   private static function src($image, $attrs, $prefix) {
+    $attrs = KirbyImgApi::widthshortcut($attrs);
     $url = url() . '/' . $prefix . $image->uri();
     if (!$attrs) return $url;
     return $url . '?' . http_build_query($attrs);
   }
 
   private static function data($image, $attrs, $prefix) {
+    $attrs = KirbyImgApi::widthshortcut($attrs);
     $query = $attrs ? '?' . http_build_query($attrs) : '';
     $url = url() . '/' . $prefix . $image->uri();
     return [
@@ -46,6 +51,10 @@ class KirbyImgApi {
       'height' => $image->height(),
       'ratio' => $image->height() / $image->width() * 100
     ];
+  }
+
+  private static function widthshortcut ($attrs) {
+    return is_int($attrs) ? [ 'width' => $attrs ] : $attrs;
   }
 
   public static function register() {
