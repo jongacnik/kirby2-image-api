@@ -43,7 +43,8 @@ class KirbyImgApi {
     return [
       'src' => $url . $query,
       'width' => $image->width(),
-      'height' => $image->height()
+      'height' => $image->height(),
+      'ratio' => $image->height() / $image->width() * 100
     ];
   }
 
