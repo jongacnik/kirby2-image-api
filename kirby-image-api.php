@@ -36,7 +36,7 @@ class KirbyImgApi {
   
   private static function src($image, $attrs, $prefix) {
     $attrs = KirbyImgApi::widthshortcut($attrs);
-    $url = url() . '/' . $prefix . $image->uri();
+    $url = KirbyImgApi::base() . $prefix . $image->uri();
     if (!$attrs) return $url;
     return $url . '?' . http_build_query($attrs);
   }
@@ -44,13 +44,17 @@ class KirbyImgApi {
   private static function data($image, $attrs, $prefix) {
     $attrs = KirbyImgApi::widthshortcut($attrs);
     $query = $attrs ? '?' . http_build_query($attrs) : '';
-    $url = url() . '/' . $prefix . $image->uri();
+    $url = KirbyImgApi::base() . $prefix . $image->uri();
     return [
       'src' => $url . $query,
       'width' => $image->width(),
       'height' => $image->height(),
       'ratio' => $image->height() / $image->width() * 100
     ];
+  }
+
+  private static function base () {
+    return str_replace('//', '/', url() . '/');
   }
 
   private static function widthshortcut ($attrs) {
