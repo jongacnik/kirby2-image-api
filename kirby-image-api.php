@@ -24,6 +24,9 @@
  * Generate thumb by width shortcut:
  * $page->image()->imgapi(100)
  *
+ * Absolute files:
+ * c::set('imageapi.absolute', true);
+ *
  */
 
 namespace KirbyImgApi;
@@ -54,7 +57,17 @@ class KirbyImgApi {
   }
 
   private static function base () {
-    return url() === '/' ? '/' : url() . '/';
+    $base = url() === '/' ? self::filebase() . '/' : url() . '/';
+    return $base;
+  }
+
+  private static function filebase () {
+    if (c::get('imageapi.absolute', false)) {
+      $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+      $domainName = $_SERVER['HTTP_HOST'];
+      return $protocol . $domainName; 
+    }
+    return '';
   }
 
   private static function widthshortcut ($attrs) {
